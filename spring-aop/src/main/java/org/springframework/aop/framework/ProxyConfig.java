@@ -21,6 +21,7 @@ import java.io.Serializable;
 import org.springframework.util.Assert;
 
 /**
+ * 规范代理配置的 java bean
  * Convenience superclass for configuration used in creating proxies,
  * to ensure that all proxy creators have consistent properties.
  *
