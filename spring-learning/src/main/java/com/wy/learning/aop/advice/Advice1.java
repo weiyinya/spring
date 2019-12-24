@@ -12,8 +12,10 @@ public class Advice1 implements MethodInterceptor {
 	@Override
 	public Object invoke(MethodInvocation invocation) throws Throwable {
 		System.out.println("advice1 before");
-		Object result = invocation.proceed();
+//		Object result = invocation.proceed();
+		Object result = invocation.getMethod().invoke(invocation.getThis(), invocation.getArguments());
 		System.out.println("advice1 after");
+		
 		return result;
 	}
 }

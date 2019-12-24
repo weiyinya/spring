@@ -17,6 +17,7 @@
 package org.aopalliance.intercept;
 
 /**
+ * method环绕型拦截，像事务等都是基于该拦截实现的
  * Intercepts calls on an interface on its way to the target. These
  * are nested "on top" of the target.
  *
