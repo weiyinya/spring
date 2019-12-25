@@ -249,7 +249,14 @@ public abstract class AbstractBeanFactory extends FactoryBeanRegistrySupport imp
 		// Eagerly check singleton cache for manually registered singletons.
 
 		/**
-		 * 判断bean是否被创建
+		 * 从缓存中获取bean实例。
+		 * 	这里其实是解决了循环依赖。
+		 *
+		 * 	例：beanA beanB相互依赖，先实例化beanA
+		 * 		beanA到这里的时候缓存中肯定是没有的，所以走else分支，doCreate(beanA)，创建原始的beanA，
+		 * 		并且beanFactory默认允许提前暴露原始bean，所以原始的beanA会缓存到singletonFactory中。
+		 * 		然后初始化依赖beanB，beanB也会走beanA的逻辑，但是beanB初始化依赖beanA的时候，就可以从缓存中找到beanA的原始引用，完成自己的初始化。
+		 * 		最后beanA也完成了自己的初始化
 		 */
 		Object sharedInstance = getSingleton(beanName);
 		if (sharedInstance != null && args == null) {//已创建
@@ -308,7 +315,7 @@ public abstract class AbstractBeanFactory extends FactoryBeanRegistrySupport imp
 				String[] dependsOn = mbd.getDependsOn();
 
 				/**
-				 * 初始化依赖
+				 * 初始化依赖，一般都不会走这里
 				 */
 				if (dependsOn != null) {
 					for (String dep : dependsOn) {
@@ -331,14 +338,15 @@ public abstract class AbstractBeanFactory extends FactoryBeanRegistrySupport imp
 					}
 				}
 
-				//依赖初始化完成
 				//创建 singleton 实例
 				// Create bean instance.
 				if (mbd.isSingleton()) {
+
+					//这里已经完全创建好了bean
 					sharedInstance = getSingleton(beanName, () -> {
 						try {
 							/**
-							 * 开始创建
+							 * 这个方法会完全创建好一个bean
 							 */
 							return createBean(beanName, mbd, args);
 						}
@@ -1691,7 +1699,7 @@ public abstract class AbstractBeanFactory extends FactoryBeanRegistrySupport imp
 			object = getCachedObjectForFactoryBean(beanName);
 		}
 		if (object == null) {
-			//获取不到缓存，调用factoryBean的getObject()方法生成实例
+			//获取不到缓存，调用factoryBean的getObject()方法生成实例。并会对这个生成的实例进行缓存
 			// Return bean instance from factory.
 			FactoryBean<?> factory = (FactoryBean<?>) beanInstance;
 			// Caches object obtained from FactoryBean if it is a singleton.

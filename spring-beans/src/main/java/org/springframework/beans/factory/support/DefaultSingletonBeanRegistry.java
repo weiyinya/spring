@@ -212,6 +212,11 @@ public class DefaultSingletonBeanRegistry extends SimpleAliasRegistry implements
 				if (logger.isDebugEnabled()) {
 					logger.debug("Creating shared instance of singleton bean '" + beanName + "'");
 				}
+
+				/**
+				 * 将beanName添加到singletonsCurrentlyInCreation中，表明该bean正在被创建
+				 * 	bean在创建完成后会从singletonsCurrentlyInCreation里移除，所以如果重复插入的话，一定出现了循环依赖，就会报错
+				 */
 				beforeSingletonCreation(beanName);
 				boolean newSingleton = false;
 				boolean recordSuppressedExceptions = (this.suppressedExceptions == null);
@@ -242,9 +247,14 @@ public class DefaultSingletonBeanRegistry extends SimpleAliasRegistry implements
 					if (recordSuppressedExceptions) {
 						this.suppressedExceptions = null;
 					}
+					//将beanName从singletonsCurrentlyInCreation中移除，表明该bean已经创建完成
 					afterSingletonCreation(beanName);
 				}
 				if (newSingleton) {
+
+					/**
+					 * 添加 bean 到 singletonObjects 缓存中，并从其他集合中将 bean 相关记录移除
+					 */
 					addSingleton(beanName, singletonObject);
 				}
 			}

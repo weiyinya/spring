@@ -1,3 +1,4 @@
+import com.wy.learning.interf.BInterface;
 import com.wy.learning.interf.TestInterface;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 
@@ -10,7 +11,7 @@ public class Test {
 		AnnotationConfigApplicationContext applicationContext = new AnnotationConfigApplicationContext();
 		applicationContext.scan("com.wy.learning");
 		applicationContext.refresh();
-		TestInterface testConfig = applicationContext.getBean(TestInterface.class);
+		BInterface testConfig = applicationContext.getBean(BInterface.class);
 		System.out.println(testConfig);
 	}
 }
