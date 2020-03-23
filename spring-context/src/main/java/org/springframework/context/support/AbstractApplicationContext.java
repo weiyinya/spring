@@ -645,7 +645,8 @@ public abstract class AbstractApplicationContext extends DefaultResourceLoader
 		refreshBeanFactory();
 
 		/**
-		 * 返回初始化的beanFactory
+		 * 返回初始化的beanFactory。
+		 * 	由子类实现该方法。（springboot会根据环境生成不同的factory）
 		 */
 		return getBeanFactory();
 	}

@@ -342,11 +342,15 @@ public abstract class AbstractBeanFactory extends FactoryBeanRegistrySupport imp
 				// Create bean instance.
 				if (mbd.isSingleton()) {
 
-					//这里已经完全创建好了bean
+					//这里已经完全创建好了bean，已经初始化完成了bean（包括依赖）
 					sharedInstance = getSingleton(beanName, () -> {
 						try {
 							/**
-							 * 这个方法会完全创建好一个bean
+							 * sharedInstance = return
+							 * 	大概执行步骤：
+							 * 		1、无参的话，直接反射生成实例；有参的话则先实例化参数，在通过反射构造方法实例自己。生成实例后将空实例引用暴露在singletonFactory中
+							 * 		2、然后初始化依赖并通过反射注入
+							 * 		3、将完全体实例返回
 							 */
 							return createBean(beanName, mbd, args);
 						}
